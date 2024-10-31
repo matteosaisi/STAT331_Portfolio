@@ -1,6 +1,6 @@
 ---
 title: "STAT 331 Portfolio"
-author: "Your Name Goes Here"
+author: "Matteo Saisi"
 format: 
   html: 
     self-contained: true
@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an __.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an \_\_.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -24,12 +24,26 @@ execute:
 ```{r}
 #| label: wd-1-csv
 
+#Lab 2, Question 1
+surveys <- read_csv(here::here("data", 
+                               "surveys.csv"))
+
 ```
 
 -   `xlsx`
 
 ```{r}
 #| label: wd-1-xlsx
+
+#Practice Activity 4, Question 3
+military <- read_xlsx(here::here("data", 
+                                 "gov_spending_per_capita.xlsx"), 
+                      sheet = "Share of Govt. spending", 
+                      skip  = 7, 
+                      n_max = 190, 
+                      na = c(". .", 
+                             "xxx")
+                      )
 
 ```
 
@@ -38,12 +52,30 @@ execute:
 ```{r}
 #| label: wd-1-txt
 
+
+
 ```
 
 **WD-2: I can select necessary columns from a dataset.**
 
 ```{r}
 #| label: wd-2
+
+#Lab 3, Question 5
+teacher_evals_clean <- teacher_evals |>
+  mutate(teacher_id = as.factor(teacher_id)) |>
+  rename(sex = gender) |>
+  filter(no_participants >= 10) |>
+  select(course_id, 
+         teacher_id,
+         question_no,
+         no_participants,
+         resp_share,
+         SET_score_avg,
+         percent_failed_cur,
+         academic_degree,
+         seniority,
+         sex) 
 
 ```
 
@@ -54,12 +86,44 @@ execute:
 ```{r}
 #| label: wd-3-numeric
 
+#Lab 5, interviewing suspects based on their ids
+person_interview |>
+  filter(id == 51739 | 
+           id == 67318 | 
+           id == 78193 | 
+           id == 28819) |>
+  pull(transcript)
+
+
+#Lab 5, Finding the final suspect
+person |>
+  full_join(drivers_license,
+            join_by(license_id == id)) |>
+  full_join(facebook_event_checkin,
+            join_by(id == person_id)) |>
+  full_join(income,
+            join_by(ssn)) |>
+  filter(height == c(65:67),
+         hair_color == "red",
+         car_make == "Tesla",
+         str_detect(event_name, "SQL Symphony")) |>
+  pull(name)
+
 ```
 
 -   character -- specifically a string (example must use functions from **stringr**)
 
 ```{r}
 #| label: wd-3-string
+
+#Lab 5
+get_fit_now_member |>
+  full_join(get_fit_now_check_in,
+            join_by(id == membership_id)) |>
+  filter(membership_status == "gold",
+         str_detect(id, "48Z"),
+         ymd(check_in_date) == "2018-01-09") |>
+  pull(person_id)
 
 ```
 
@@ -68,12 +132,22 @@ execute:
 ```{r}
 #| label: wd-3-factor
 
+#Lab 4
+
+
 ```
 
 -   date (example must use functions from **lubridate**)
 
 ```{r}
 #| label: wd-3-date
+
+#Lab 5, Crime Scene Report
+crime_scene_report |>
+  filter(city == "SQL City",
+         type == "murder",
+         ymd(date) == "2018-01-15") |>
+  pull(description)
 
 ```
 
@@ -84,12 +158,16 @@ execute:
 ```{r}
 #| label: wd-4-numeric
 
+
+
 ```
 
 -   character -- specifically a string (example must use functions from **stringr**)
 
 ```{r}
 #| label: wd-4-string
+
+
 
 ```
 
@@ -98,12 +176,28 @@ execute:
 ```{r}
 #| label: wd-4-factor
 
+#Lab 4, Question 3
+ca_childcare <- ca_childcare |> 
+  mutate(region = fct_collapse(.f = county_name,
+                               "Superior California" = c("Butte County", "Colusa County", "El Dorado County", "Glenn County", "Lassen County", "Modoc County", "Nevada County", "Placer County", "Plumas County", "Sacramento County", "Shasta County", "Sierra County", "Siskiyou County", "Sutter County", "Tehama County", "Yolo County", "Yuba County"),
+                               "North Coast" = c("Del Norte County", "Humboldt County", "Lake County", "Mendocino County", "Napa County", "Sonoma County", "Trinity County"),
+                               "San Francisco Bay Area" = c("Alameda County", "Contra Costa County", "Marin County", "San Francisco County","San Mateo County", "Santa Clara County", "Solano County"),
+                               "Northern San Joaquin Valley" = c("Alpine County", "Amador County", "Calaveras County", "Madera County", "Mariposa County", "Merced County", "Mono County", "San Joaquin County", "Stanislaus County", "Tuolumne County"),
+                               "Central Coast" = c("Monterey County", "San Benito County", "San Luis Obispo County", "Santa Barbara County", "Santa Cruz County", "Ventura County"),
+                               "Southern San Joaquin Valley" = c("Fresno County", "Inyo County", "Kern County", "Kings County", "Tulare County"),
+                               "Inland Empire" = c("Riverside County", "San Bernardino County"),
+                               "Los Angeles County" = c("Los Angeles County"),
+                               "Orange County" = c("Orange County"),
+                               "San Diego - Imperial" = c("San Diego County", "Imperial County")))
+
 ```
 
 -   date (example must use functions from **lubridate**)
 
 ```{r}
 #| label: wd-4-date
+
+
 
 ```
 
@@ -128,12 +222,35 @@ execute:
 ```{r}
 #| label: wd-5-inner
 
+#Lab 5, Checking gym members license plate
+person |>
+  inner_join(drivers_license,
+            join_by(license_id == id)) |>
+  filter(str_detect(plate_number, 
+                    "H42W")) |>
+  pull(id)
+
+
+#Lab 5, joining interview and person datasets
+person_interview <- person |>
+  inner_join(interview, 
+             join_by(id == person_id))
+
 ```
 
 -   `full_join()`
 
 ```{r}
 #| label: wd-5-full
+
+#Lab 5, Checking license plate and date
+get_fit_now_member |>
+  full_join(get_fit_now_check_in,
+            join_by(id == membership_id)) |>
+  filter(membership_status == "gold",
+         str_detect(id, "48Z"),
+         ymd(check_in_date) == "2018-01-09") |>
+  pull(person_id)
 
 ```
 
@@ -160,6 +277,46 @@ execute:
 ```{r}
 #| label: wd-7-long
 
+#Lab 4, Question 6
+ca_childcare |>
+  select(study_year, 
+         region, 
+         mc_infant, 
+         mc_toddler, 
+         mc_preschool) |>
+  pivot_longer(cols = c(mc_infant, 
+                        mc_toddler,
+                        mc_preschool), 
+               names_to = "mc_cat", 
+               values_to = "mc_cost") |>
+  mutate(mc_cat = fct_recode(.f = mc_cat,
+                             "Infant" = "mc_infant",
+                             "Toddler" = "mc_toddler",
+                             "Preschool" = "mc_preschool")) |>
+  ggplot(mapping = aes(x = study_year, 
+                       y = mc_cost, 
+                       color = fct_reorder2(.f = region,
+                                            .x = study_year, 
+                                            .y = mc_cost))) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_continuous(breaks = c(2008, 
+                                2010, 
+                                2012, 
+                                2014, 
+                                2016, 
+                                2018)) +
+  facet_wrap(~ (mc_cat = fct_relevel(mc_cat, 
+                                     "Infant", 
+                                     "Toddler", 
+                                     "Preschool"))) +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 6.5)) +
+  labs(y = "",
+       x = "Study Year",
+       color = "California Region",
+       title = "Weekly Median Price for Center-Based Childcare ($)")
+
 ```
 
 -   `pivot_wider()`
@@ -182,12 +339,38 @@ I've done this in the following provided assignments:
 ```{r}
 #| label: r-2-1
 
+#Lab 2, Question 16
+ggplot(surveys, aes(x = weight, 
+                    y = species)) + 
+  geom_jitter(alpha = 0.5, 
+              color = "blue") +
+  geom_boxplot() + 
+  labs(x = "Weight (grams)", 
+       y = "",
+       title = "Weight by Species")
+
 ```
 
 -   Example of **dplyr** pipeline
 
 ```{r}
 #| label: r-2-2
+
+#Lab 3, Question 5
+teacher_evals_clean <- teacher_evals |>
+  mutate(teacher_id = as.factor(teacher_id)) |>
+  rename(sex = gender) |>
+  filter(no_participants >= 10) |>
+  select(course_id, 
+         teacher_id,
+         question_no,
+         no_participants,
+         resp_share,
+         SET_score_avg,
+         percent_failed_cur,
+         academic_degree,
+         seniority,
+         sex) 
 
 ```
 
