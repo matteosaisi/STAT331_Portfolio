@@ -97,19 +97,20 @@ person_interview |>
   pull(transcript)
 
 
-#Lab 5, Finding the final suspect
+#Lab 5, Finding final suspect
 person |>
-  full_join(drivers_license,
+  right_join(drivers_license,
             join_by(license_id == id)) |>
-  full_join(facebook_event_checkin,
+  right_join(facebook_event_checkin,
             join_by(id == person_id)) |>
-  full_join(income,
+  right_join(income,
             join_by(ssn)) |>
+  mutate(annual_income = str_c("$", annual_income)) |>
   filter(height == c(65:67),
          hair_color == "red",
          car_make == "Tesla",
          str_detect(event_name, "SQL Symphony")) |>
-  pull(name)
+  pull(name, annual_income)
 
 ```
 
@@ -118,13 +119,21 @@ person |>
 ```{r}
 #| label: wd-3-string
 
-#Lab 5
+#Lab 5, finding a new suspect by gym membership and license plate
 get_fit_now_member |>
-  full_join(get_fit_now_check_in,
+  inner_join(get_fit_now_check_in,
             join_by(id == membership_id)) |>
+  mutate(check_in_date = ymd(check_in_date)) |>
   filter(membership_status == "gold",
-         str_detect(id, "48Z"),
-         ymd(check_in_date) == "2018-01-09") |>
+         str_starts(id, "48Z"),
+         year(check_in_date) == 2018,
+         month(check_in_date) == 1,
+         day(check_in_date) == 9) |>
+  inner_join(person,
+             join_by(person_id == id)) |>
+  inner_join(drivers_license,
+             join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
   pull(person_id)
 
 ```
@@ -134,7 +143,22 @@ get_fit_now_member |>
 ```{r}
 #| label: wd-3-factor
 
-
+#Lab 5, finding a new suspect by gym membership and license plate
+get_fit_now_member |>
+  inner_join(get_fit_now_check_in,
+            join_by(id == membership_id)) |>
+  mutate(check_in_date = ymd(check_in_date)) |>
+  filter(membership_status == "gold",
+         str_starts(id, "48Z"),
+         year(check_in_date) == 2018,
+         month(check_in_date) == 1,
+         day(check_in_date) == 9) |>
+  inner_join(person,
+             join_by(person_id == id)) |>
+  inner_join(drivers_license,
+             join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
+  pull(person_id)
 
 ```
 
@@ -177,7 +201,20 @@ teacher_evals_compare <- teacher_evals_clean |>
 ```{r}
 #| label: wd-4-string
 
-
+#Lab 5, Finding final suspect
+person |>
+  right_join(drivers_license,
+            join_by(license_id == id)) |>
+  right_join(facebook_event_checkin,
+            join_by(id == person_id)) |>
+  right_join(income,
+            join_by(ssn)) |>
+  mutate(annual_income = str_c("$", annual_income)) |>
+  filter(height == c(65:67),
+         hair_color == "red",
+         car_make == "Tesla",
+         str_detect(event_name, "SQL Symphony")) |>
+  pull(name, annual_income)
 
 ```
 
@@ -207,7 +244,22 @@ ca_childcare <- ca_childcare |>
 ```{r}
 #| label: wd-4-date
 
-
+#Lab 5, finding a new suspect by gym membership and license plate
+get_fit_now_member |>
+  inner_join(get_fit_now_check_in,
+            join_by(id == membership_id)) |>
+  mutate(check_in_date = ymd(check_in_date)) |>
+  filter(membership_status == "gold",
+         str_starts(id, "48Z"),
+         year(check_in_date) == 2018,
+         month(check_in_date) == 1,
+         day(check_in_date) == 9) |>
+  inner_join(person,
+             join_by(person_id == id)) |>
+  inner_join(drivers_license,
+             join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
+  pull(person_id)
 
 ```
 
@@ -218,12 +270,32 @@ ca_childcare <- ca_childcare |>
 ```{r}
 #| label: wd-5-left
 
+#Lab 4, Question 2 (Revised to use left_join)
+ca_childcare <- counties |>
+  left_join(childcare_costs) |>
+  filter(state_abbreviation == "CA")
+
 ```
 
 -   `right_join()`
 
 ```{r}
 #| label: wd-5-right
+
+#Lab 5, Finding final suspect
+person |>
+  right_join(drivers_license,
+            join_by(license_id == id)) |>
+  right_join(facebook_event_checkin,
+            join_by(id == person_id)) |>
+  right_join(income,
+            join_by(ssn)) |>
+  mutate(annual_income = str_c("$", annual_income)) |>
+  filter(height == c(65:67),
+         hair_color == "red",
+         car_make == "Tesla",
+         str_detect(event_name, "SQL Symphony")) |>
+  pull(name, annual_income)
 
 ```
 
@@ -232,34 +304,21 @@ ca_childcare <- ca_childcare |>
 ```{r}
 #| label: wd-5-inner
 
-#Lab 5, Checking gym members license plate
-person |>
-  inner_join(drivers_license,
-            join_by(license_id == id)) |>
-  filter(str_detect(plate_number, 
-                    "H42W")) |>
-  pull(id)
-
-
-#Lab 5, joining interview and person datasets
-person_interview <- person |>
-  inner_join(interview, 
-             join_by(id == person_id))
-
-```
-
--   `full_join()`
-
-```{r}
-#| label: wd-5-full
-
-#Lab 5, Checking license plate and date
+#Lab 5, finding a new suspect by gym membership and license plate
 get_fit_now_member |>
-  full_join(get_fit_now_check_in,
+  inner_join(get_fit_now_check_in,
             join_by(id == membership_id)) |>
+  mutate(check_in_date = ymd(check_in_date)) |>
   filter(membership_status == "gold",
-         str_detect(id, "48Z"),
-         ymd(check_in_date) == "2018-01-09") |>
+         str_starts(id, "48Z"),
+         year(check_in_date) == 2018,
+         month(check_in_date) == 1,
+         day(check_in_date) == 9) |>
+  inner_join(person,
+             join_by(person_id == id)) |>
+  inner_join(drivers_license,
+             join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
   pull(person_id)
 
 ```
@@ -271,6 +330,14 @@ get_fit_now_member |>
 ```{r}
 #| label: wd-6-semi
 
+#Lab 5, creating a clean dataset with each person and interview with no NA gaps to reference multiple times later in the document
+person_interview <- person |>
+  right_join(interview, 
+             join_by(id == person_id)) |>
+  semi_join(interview,
+             join_by(id == person_id)) |>
+  filter(!is.na(transcript))
+
 ```
 
 -   `anti_join()`
@@ -278,10 +345,7 @@ get_fit_now_member |>
 ```{r}
 #| label: wd-6-anti
 
-#Practice Activity 4, Question 4 (Create stronger example for the final in a lab)
-military_clean <- anti_join(military, 
-                            cont_region,
-                            by = join_by(Country == Region))
+
 
 ```
 
@@ -405,7 +469,20 @@ teacher_evals_clean <- teacher_evals |>
 ```{r}
 #| label: r-2-3
 
+# Lab 9, Question 1
+randomBabies <- function(nBabies = 4){
+  sample <- tibble(baby = 1:nBabies,
+                  number = sample(1:nBabies,
+                                size = nBabies,
+                                replace = FALSE))
+  sample |>
+    filter(baby == number) |>
+    nrow()
+}
 
+results <- map_int(.x = 1:10000,
+                   .f = ~ randomBabies(4)
+                   )
 
 ```
 
@@ -416,13 +493,13 @@ teacher_evals_clean <- teacher_evals |>
 ```{r}
 #| label: r-3-example
 
-#Lab 3, Question 10
-teacher_evals_clean |>
-  filter(question_no == 901) |>
-  group_by(teacher_id) |>
-  summarise(mean_score = mean(SET_score_avg)) |>
-  filter(mean_score == max(mean_score) | mean_score == min(mean_score)) |>
-  arrange(desc(mean_score))
+#Lab 4, Question 5 (Slice)
+ca_childcare |>
+  select(region, study_year, mc_infant) |>
+  filter(study_year == 2018) |>
+  group_by(region) |>
+  summarise(meanprice = mean(mc_infant)) |>
+  slice_min(meanprice, n = 1)
 
 ```
 
@@ -431,7 +508,15 @@ teacher_evals_clean |>
 ```{r}
 #| label: r-3-function-stops
 
-
+#Lab 7, Question 4
+rescale_01 <- function(input){
+  if (!is.numeric(input)) 
+    stop("Must be Numeric")
+  if (length(input) <= 1) 
+    stop("Must have a length of at least 2")
+  rng <- range(input, na.rm = TRUE)
+  (input - rng[1]) / (rng[2] - rng[1])
+}
 
 ```
 
@@ -475,12 +560,14 @@ ggplot(surveys, aes(x = weight, y = species)) +
 ```{r}
 #| label: dvs-2-cat
 
-#Challenge 2
-surveys |> 
-  ggplot(aes(x = weight, y = species, color = genus)) +
-  geom_boxplot() +
-  scale_color_manual(values = cdPalette_grey) +
-  labs(x = "Weight (g)", y = "", subtitle = "Species", legend = "Genus")
+#Challenge 3, Question 2
+teacher_evals_compare |>
+  ggplot(mapping = aes(x = sen_level, fill = SET_level)) +
+  geom_bar() +
+  scale_fill_manual(values = c("steelblue", "orange3")) +
+  labs(x = "Seniority of Instructor",
+       y = "",
+       title = "Number of Sections")
 
 ```
 
@@ -489,7 +576,45 @@ surveys |>
 ```{r}
 #| label: dvs-2-date
 
-
+#Lab 4, Question 6
+ca_childcare |>
+  select(study_year, 
+         region, 
+         mc_infant, 
+         mc_toddler, 
+         mc_preschool) |>
+  pivot_longer(cols = c(mc_infant, 
+                        mc_toddler,
+                        mc_preschool), 
+               names_to = "mc_cat", 
+               values_to = "mc_cost") |>
+  mutate(mc_cat = fct_recode(.f = mc_cat,
+                             "Infant" = "mc_infant",
+                             "Toddler" = "mc_toddler",
+                             "Preschool" = "mc_preschool")) |>
+  ggplot(mapping = aes(x = study_year, 
+                       y = mc_cost, 
+                       color = fct_reorder2(.f = region,
+                                            .x = study_year, 
+                                            .y = mc_cost))) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_continuous(breaks = c(2008, 
+                                2010, 
+                                2012, 
+                                2014, 
+                                2016, 
+                                2018)) +
+  facet_wrap(~ (mc_cat = fct_relevel(mc_cat, 
+                                     "Infant", 
+                                     "Toddler", 
+                                     "Preschool"))) +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 6.5)) +
+  labs(y = "",
+       x = "Study Year",
+       color = "California Region",
+       title = "Weekly Median Price for Center-Based Childcare ($)")
 
 ```
 
@@ -614,28 +739,20 @@ ca_childcare |>
 #| label: dvs-3-1
 
 #Challenge 2, Final Plot
-cdPalette_grey <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cdPalette_custom  <- c("#6A4C93", "#D72638", "#4CAF50", "#F4C242", "#4776E6", "#B33F62", "#E38731", "#168AAD")
 
 ggplot(data = surveys, 
        mapping = aes(y = species,
                      x = weight,
                      color = genus)) +
   geom_boxplot() +
-  scale_color_manual(values = cdPalette_grey) + 
-  annotate("text", y = 14, x = 250, label = "Onychomys") +
-  annotate("text", y = 13, x = 250, label = "Dipodomys") +
-  annotate("text", y = 12, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 11, x = 250, label = "Dipodomys") +
-  annotate("text", y = 10, x = 250, label = "Dipodomys") +
-  annotate("text", y = 9, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 8, x = 250, label = "Peromyscus") +
-  annotate("text", y = 7, x = 250, label = "Onychomys") +
-  annotate("text", y = 6, x = 250, label = "Sigmodon") +
-  annotate("text", y = 5, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 4, x = 250, label = "Perognathus") +
-  annotate("text", y = 3, x = 250, label = "Peromyscus") +
-  annotate("text", y = 2, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 1, x = 250, label = "Neotoma") +
+  annotate("text", 
+           x = rep(250, 14),
+           y = 1:14,
+           label = c("Neotoma", "Chaetodipus", "Peromyscus", "Perognathus", 
+                     "Reithrodontomys", "Sigmodon", "Onychomys", "Peromyscus", 
+                     "Reithrodontomys", "Dipodomys", "Dipodomys", "Chaetodipus", 
+                     "Dipodomys", "Onychomys")) +
   theme(legend.position = "none") +
   labs(x = "Weight (g)",
        y = "",
@@ -650,26 +767,20 @@ ggplot(data = surveys,
 #| label: dvs-3-2
 
 #Challenge 2, Final Plot
+cdPalette_custom  <- c("#6A4C93", "#D72638", "#4CAF50", "#F4C242", "#4776E6", "#B33F62", "#E38731", "#168AAD")
+
 ggplot(data = surveys, 
        mapping = aes(y = species,
                      x = weight,
                      color = genus)) +
   geom_boxplot() +
-  scale_color_manual(values = cdPalette_grey) + 
-  annotate("text", y = 14, x = 250, label = "Onychomys") +
-  annotate("text", y = 13, x = 250, label = "Dipodomys") +
-  annotate("text", y = 12, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 11, x = 250, label = "Dipodomys") +
-  annotate("text", y = 10, x = 250, label = "Dipodomys") +
-  annotate("text", y = 9, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 8, x = 250, label = "Peromyscus") +
-  annotate("text", y = 7, x = 250, label = "Onychomys") +
-  annotate("text", y = 6, x = 250, label = "Sigmodon") +
-  annotate("text", y = 5, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 4, x = 250, label = "Perognathus") +
-  annotate("text", y = 3, x = 250, label = "Peromyscus") +
-  annotate("text", y = 2, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 1, x = 250, label = "Neotoma") +
+  annotate("text", 
+           x = rep(250, 14),
+           y = 1:14,
+           label = c("Neotoma", "Chaetodipus", "Peromyscus", "Perognathus", 
+                     "Reithrodontomys", "Sigmodon", "Onychomys", "Peromyscus", 
+                     "Reithrodontomys", "Dipodomys", "Dipodomys", "Chaetodipus", 
+                     "Dipodomys", "Onychomys")) +
   theme(legend.position = "none") +
   labs(x = "Weight (g)",
        y = "",
@@ -684,28 +795,20 @@ ggplot(data = surveys,
 #| label: dvs-3-3
 
 #Challenge 2, Final Plot
-cdPalette_grey <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cdPalette_custom  <- c("#6A4C93", "#D72638", "#4CAF50", "#F4C242", "#4776E6", "#B33F62", "#E38731", "#168AAD")
 
 ggplot(data = surveys, 
        mapping = aes(y = species,
                      x = weight,
                      color = genus)) +
   geom_boxplot() +
-  scale_color_manual(values = cdPalette_grey) + 
-  annotate("text", y = 14, x = 250, label = "Onychomys") +
-  annotate("text", y = 13, x = 250, label = "Dipodomys") +
-  annotate("text", y = 12, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 11, x = 250, label = "Dipodomys") +
-  annotate("text", y = 10, x = 250, label = "Dipodomys") +
-  annotate("text", y = 9, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 8, x = 250, label = "Peromyscus") +
-  annotate("text", y = 7, x = 250, label = "Onychomys") +
-  annotate("text", y = 6, x = 250, label = "Sigmodon") +
-  annotate("text", y = 5, x = 250, label = "Reithrodontomys") +
-  annotate("text", y = 4, x = 250, label = "Perognathus") +
-  annotate("text", y = 3, x = 250, label = "Peromyscus") +
-  annotate("text", y = 2, x = 250, label = "Chaetodipus") +
-  annotate("text", y = 1, x = 250, label = "Neotoma") +
+  annotate("text", 
+           x = rep(250, 14),
+           y = 1:14,
+           label = c("Neotoma", "Chaetodipus", "Peromyscus", "Perognathus", 
+                     "Reithrodontomys", "Sigmodon", "Onychomys", "Peromyscus", 
+                     "Reithrodontomys", "Dipodomys", "Dipodomys", "Chaetodipus", 
+                     "Dipodomys", "Onychomys")) +
   theme(legend.position = "none") +
   labs(x = "Weight (g)",
        y = "",
@@ -810,13 +913,7 @@ teacher_evals_clean |>
 ```{r}
 #| label: dvs-6-2
 
-#Lab 3, Question 10
-teacher_evals_clean |>
-  filter(seniority == 1) |>
-  group_by(teacher_id) |>
-  summarise(avg_fail = mean(percent_failed_cur)) |>
-  filter(avg_fail == max(avg_fail) | avg_fail == min(avg_fail)) |>
-  arrange(desc(avg_fail))
+
 
 ```
 
@@ -827,12 +924,42 @@ teacher_evals_clean |>
 ```{r}
 #| label: dvs-7-1
 
+#Lab 8, Question 2
+evals |>
+  map_at(c("teacher_id", 
+           "weekday", 
+           "academic_degree", 
+           "seniority", 
+           "sex"), 
+         as.factor) |>
+  bind_cols() |>
+  kable(format = "html") |>
+  kable_styling(html_font = "Ariel Narrow",
+                bootstrap_options = "striped")
+
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dvs-7-2
+
+#Lab 9, Question 7
+all_simulations |>
+  group_by(n) |>
+  summarise(Overall_Mean = mean(simulated_means)) |>
+  gt() |>
+  tab_header(title = md("**Means of Different Simulation Sizes**"), 
+             subtitle = md("*Sizes of 10, 100, 1000, and 10000*")) |>
+  tab_style(style = cell_text(font = "Arial", size = px(14)),
+            locations = cells_body()) |>
+  tab_options(table.border.top.color = "black",
+              table.border.bottom.color = "black") |>
+  fmt_number(columns = Overall_Mean,
+            decimals = 2) |>
+  cols_label(n = "Simulation Size",
+             Overall_Mean = "Mean Value")
+
 
 ```
 
@@ -876,6 +1003,11 @@ teacher_evals_clean |>
            )
     )
 
+#Lab 7, Question 1
+BlackfootFish |>
+  summarise(across(trip:species,
+                   ~ sum(is.na(.x))))
+
 ```
 
 -   `map()` functions
@@ -883,6 +1015,18 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-1-map-1
 
+#Lab 8, Question 2
+evals |>
+  map_at(c("teacher_id", 
+           "weekday", 
+           "academic_degree", 
+           "seniority", 
+           "sex"), 
+         as.factor) |>
+  bind_cols() |>
+  kable(format = "html") |>
+  kable_styling(html_font = "Ariel Narrow",
+                bootstrap_options = "striped")
 
 ```
 
@@ -893,6 +1037,14 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-2-1
 
+#Lab 7, Question 4
+rescale_01 <- function(input){
+  if (!is.numeric(input)) stop("Must be Numeric")
+  if (length(input) <= 1) stop("Must have a length of at least 2")
+  rng <- range(input, na.rm = TRUE)
+  (input - rng[1]) / (rng[2] - rng[1])
+}
+
 ```
 
 -   Function that operates on data frames
@@ -900,6 +1052,13 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-2-2
 
+#Lab 7, Question 8
+rescale_column <- function(df, var_names){
+  df |>
+    mutate(across(.cols = {{var_names}}, 
+                  ~rescale_01(.x)))
+}
+  
 ```
 
 **PE-3:I can use iteration to reduce repetition in my code.**
@@ -909,6 +1068,13 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-3-across
 
+#Lab 7, Question 8
+rescale_column <- function(df, var_names){
+  df |>
+    mutate(across(.cols = {{var_names}}, 
+                  ~rescale_01(.x)))
+}
+
 ```
 
 -   `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
@@ -916,12 +1082,27 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-3-map-1
 
+#Lab 8, Question 2
+surveys |>
+  map_chr(class) |>
+  bind_rows() |>
+  kable(format = "html") |>
+  kable_styling(html_font = "sans-serif",
+                bootstrap_options = "bordered")
+
 ```
 
 -   `map()` function with **more than one** input (e.g., `map_2()` or `pmap()`)
 
 ```{r}
 #| label: pe-3-map-2
+
+#Lab 9, Question 6
+all_simulations <- grid |> 
+  mutate(simulated_means = pmap(.l = grid, 
+                                .f = simulate_means)
+         ) |>
+  unnest(simulated_means)
 
 ```
 
@@ -932,10 +1113,13 @@ teacher_evals_clean |>
 ```{r}
 #| label: pe-4-1
 
-#Lab 3, Question 9
+#Lab 3, Question 7
 teacher_evals_clean |>
-  count(course_id, teacher_id) |>
-  filter(n == 9)
+  filter(
+    if_any(.cols = teacher_id:sex,
+           .fns = ~ is.na(.x)
+           )
+    )
 
 ```
 
@@ -995,12 +1179,34 @@ ca_childcare |>
 ```{r}
 #| label: dsm-1-1
 
+#Lab 9, Question 4
+simulate_means <- function(n, df){
+  map_dbl(.x = 1:n, 
+          .f = ~rchisq(n = 100, df) %>% mean()
+          )
+}
+
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-1-2
+
+#Lab 9, Question 1 (Sample function)
+randomBabies <- function(nBabies = 4){
+  sample <- tibble(baby = 1:nBabies,
+                  number = sample(1:nBabies,
+                                size = nBabies,
+                                replace = FALSE))
+  sample |>
+    filter(baby == number) |>
+    nrow()
+}
+
+results <- map_int(.x = 1:10000,
+                   .f = ~ randomBabies(4)
+                   )
 
 ```
 
@@ -1035,19 +1241,20 @@ summary(reg_mod1)
 
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
-Throughout the course I have done my best to revise and resubmit every assignment that I have received a growing on. I did not just do this to receive a better grade, I did it to correct small mistakes and try to learn how I could improve on my assignments. While in some cases, my mistakes may have been repeated, I have always believed that practice makes perfect and it will often take multiple trials to get things close to perfect. This being said, I have always seen revisions as a chance to continue practicing my skills in R and increase my attention to detail when it comes to little things that make big differences.
+Throughout the quarter, I have done my best to revise and resubmit every assignment that I have received a growing on. I did not just do this to receive a better grade, I did it to correct small mistakes and try to learn how I could improve on my assignments. While in some cases, my mistakes may have been repeated, I have always believed that practice makes perfect and it will often take multiple trials to get things close to perfect. This being said, I have always seen revisions as a chance to continue practicing my skills in R and increase my attention to detail when it comes to little things that make big differences.
 
 ## Extending My Thinking
 
 <!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
 
-I believe that I mainly demonstrated extended thinking within my challenge assignments. During the challenge assignments I always did my best to attempt the most difficult challenge and at least struggle with the problems a little bit to get better at critical thinking and working around issues in R. During my assignments I believe I extended my thinking by doing my best to find a solution that I was confident in (and understood) and not just surrender to the problem / accept that I was going to get a “growing.”
+I believe that I mainly demonstrated extended thinking within my challenge assignments. During the challenge assignments I always did my best to attempt the most difficult challenge and at least struggle with the problems a little bit to get better at critical thinking and working around issues in R. During my assignments I believe I extended my thinking by doing my best to find a solution that I was confident in (and understood) and not just surrender to the problem / accept that I was going to get a “growing.” The best part about challenging myself to extend my thinking was that I could then approach a similar problem and get through it much more efficiently, because I was already familiar with the general steps that I needed to take in order to succeed.
 
 ## Peer Support & Collaboration
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
-This was a peer review that I was proud of:
+This was a peer review that I was proud of: 
+
 "Hey Khoa, great job on Lab 4!
 
 First off, I noticed that your code is very tidy for the most part. There were a couple instances where you could have made some returns after commas, but for the most part you did very well. Additionally, I appreciate you sizing down the text size on the x-axis of your graph, I will definitely be adding that to my revisions!
@@ -1058,4 +1265,4 @@ Again, great job on lab 4!"
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 
-I think when it came to working in a pair on practice activities, I never really had any large issues. I was always trying to be conscious of the coder and developer roles and follow the directions as best as possible. I think where I improved was in my advice as the developer to the coder. I became better at explaining my thought processes and explaining how I knew something made sense a certain way. This allowed me and my partner to be much more efficient with our practice activities and gave us more time to learn what was going on in the R code. 
+I think when it came to working in a pair on practice activities, I never really had any large issues. I was always trying to be conscious of the coder and developer roles and follow the directions as best as possible. I think where I improved was in my advice as the developer to the coder. I became better at explaining my thought processes and explaining how I knew something made sense a certain way. This allowed me and my partner to be much more efficient with our practice activities and gave us more time to learn what was going on in the R code.
