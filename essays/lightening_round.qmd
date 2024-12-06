@@ -12,7 +12,7 @@ editor: visual
 
 2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
 
-    I think data joins was probably the hardest because I had a hard time understanding the differences between them and when/why you would want to use one instead of another.
+    I think data joins was the hardest for me because I had a hard time understanding the differences between them and when/why you would want to use one instead of another.
 
 3.  What was the easiest part of the class for you? Explain why.
 
