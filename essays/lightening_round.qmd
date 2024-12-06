@@ -6,16 +6,22 @@ editor: visual
 
 **Answer each of the following questions with *one sentence* including a brief explanation.**
 
-1. Finish the sentence with another student’s name: "If [Name of Student] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
+1.  Finish the sentence with another student’s name: "If \[Name of Student\] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
 
+    If Ryan doesn’t earn an A, then nobody should, because he gave me a really good peer review (I actually started modeling my peer reviews after his) and I think that if he has been putting as much effort into his labs and challenges as he put into the peer review he gave me, then I think he should definitely receive an A.
 
-2. What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
+2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
 
+    I think data joins was probably the hardest because I had a hard time understanding the differences between them and when/why you would want to use one instead of another.
 
-3. What was the easiest part of the class for you? Explain why.
+3.  What was the easiest part of the class for you? Explain why.
 
+    I think ggplot and dplyr pipelines as a whole were some of the easier topics to understand because they have a lot of parallels to one another and they just make sense in my head.
 
-4. What part of the class surprised or interested you the most? Explain why.
+4.  What part of the class surprised or interested you the most? Explain why.
 
+    The part of the class that interested me the most was probably ggplot and data visualization as I liked being able to apply it in my other classes that use R.
 
-5. Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+
+    I would suggest that any student just starting STAT 331 should do their best to stay on top of check ins and stay ahead on labs and challenge assignments because it is much easier to succeed in this class when you are not behind.
