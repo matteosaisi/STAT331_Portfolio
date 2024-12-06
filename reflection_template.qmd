@@ -88,7 +88,7 @@ teacher_evals_clean <- teacher_evals |>
 ```{r}
 #| label: wd-3-numeric
 
-#Lab 5, interviewing suspects based on their ids
+#Lab 5, Interviewing suspects based on their IDs
 person_interview |>
   filter(id == 51739 | 
            id == 67318 | 
