@@ -15,3 +15,11 @@ As we’ve said in the class efficiency is a pivotal component of statistical co
 -   Why is efficiency important?
 
 -   Where did you encounter efficiency, and what were some [“a-ha” moments](https://www.merriam-webster.com/dictionary/aha%20moment) you had about efficiency? (For the latter, tie each a-ha moment to an artifact in the portfolio.)
+
+My general definition of efficiency is the completion of a task in the quickest and most accurate way possible. In terms of statistical computing, I would say efficiency is the ability to optimize the length of code, the runtime of code, and the memory usage of code. Efficiency in statistical computing allows you to accomplish more in a shorter amount of time, which becomes especially important when scaling problem sizes.
+
+The time it takes for a piece of code to run five times may not differ significantly between efficient and inefficient implementations. However, if the code is run 1,000,000 times, the difference could translate into hundreds of millions of years in processing time. This principle is clearly observed in functions, where methods such as using vectorized functions instead of loops can lead to improved efficiency.
+
+The most memorable encounters I’ve had with efficiency were while writing and formatting code. We constantly learned to search for ways to write code without repeating function calls unnecessarily. For example, in any filter or select function used to reduce a dataset, instead of calling the function three or four (or more) times, we learned to include all the arguments in a single function call.
+
+One "a-ha" moment I had about efficiency was when I consolidated all my annotations in the artifact DVS-3-2. Initially, I had around 16 separate calls to the annotate function because I couldn't figure out how to combine them into one argument. After researching the annotate function, I discovered that I could obtain the same result with a single call.
