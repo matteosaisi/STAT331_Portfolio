@@ -88,12 +88,9 @@ teacher_evals_clean <- teacher_evals |>
 ```{r}
 #| label: wd-3-numeric
 
-#Lab 5, Interviewing suspects based on their IDs
+#Lab 5, Interviewing a suspects based on their ID
 person_interview |>
-  filter(id == 51739 | 
-           id == 67318 | 
-           id == 78193 | 
-           id == 28819) |>
+  filter(id == 67318) |>
   pull(transcript)
 
 
@@ -167,12 +164,22 @@ get_fit_now_member |>
 ```{r}
 #| label: wd-3-date
 
-#Lab 5, Crime Scene Report
-crime_scene_report |>
-  filter(city == "SQL City",
-         type == "murder",
-         ymd(date) == "2018-01-15") |>
-  pull(description)
+#Lab 5, finding a new suspect by gym membership and license plate
+get_fit_now_member |>
+  inner_join(get_fit_now_check_in,
+            join_by(id == membership_id)) |>
+  mutate(check_in_date = ymd(check_in_date)) |>
+  filter(membership_status == "gold",
+         str_starts(id, "48Z"),
+         year(check_in_date) == 2018,
+         month(check_in_date) == 1,
+         day(check_in_date) == 9) |>
+  inner_join(person,
+             join_by(person_id == id)) |>
+  inner_join(drivers_license,
+             join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
+  pull(person_id)
 
 ```
 
@@ -201,7 +208,7 @@ teacher_evals_compare <- teacher_evals_clean |>
 ```{r}
 #| label: wd-4-string
 
-#Lab 5, Finding final suspect
+#Lab 5, Finding final suspect (revision: adding dollar sign in front of all income figures)
 person |>
   right_join(drivers_license,
             join_by(license_id == id)) |>
@@ -1039,8 +1046,10 @@ evals |>
 
 #Lab 7, Question 4
 rescale_01 <- function(input){
-  if (!is.numeric(input)) stop("Must be Numeric")
-  if (length(input) <= 1) stop("Must have a length of at least 2")
+  if (!is.numeric(input)) 
+    stop("Must be Numeric")
+  if (length(input) <= 1) 
+    stop("Must have a length of at least 2")
   rng <- range(input, na.rm = TRUE)
   (input - rng[1]) / (rng[2] - rng[1])
 }
