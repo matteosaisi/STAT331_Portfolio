@@ -956,7 +956,7 @@ evals |>
 #Lab 9, Question 7
 all_simulations |>
   group_by(n) |>
-  summarise(Overall_Mean = mean(simulated_means)) |>
+  summarise(overall_mean = mean(simulated_means)) |>
   gt() |>
   tab_header(title = md("**Means of Different Simulation Sizes**"), 
              subtitle = md("*Sizes of 10, 100, 1000, and 10000*")) |>
@@ -964,10 +964,10 @@ all_simulations |>
             locations = cells_body()) |>
   tab_options(table.border.top.color = "black",
               table.border.bottom.color = "black") |>
-  fmt_number(columns = Overall_Mean,
+  fmt_number(columns = overall_mean,
             decimals = 2) |>
   cols_label(n = "Simulation Size",
-             Overall_Mean = "Mean Value")
+             overall_mean = "Mean Value")
 
 
 ```
