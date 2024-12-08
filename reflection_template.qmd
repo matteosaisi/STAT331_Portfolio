@@ -544,14 +544,19 @@ rescale_01 <- function(input){
 ```{r}
 #| label: dvs-1-num
 
-#Lab 2, Question 4
+#Lab 2, Question 4 (Revised with additional text theme options to make the plot more interesting)
 ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) + 
   geom_point(color = "darkblue", alpha = 0.5) + 
   facet_wrap(~species) +
-  labs(x = "Weight (grams)", 
+  labs(x = "Weight (Grams)", 
        y = "",
-       subtitle = "Hindfoot Length (millimeters)",
-       title = "Hindfoot Length vs. Weight Faceted by Species of Animal")
+       subtitle = "Hindfoot Length (Millimeters)",
+       title = "Hindfoot Length vs. Weight Faceted by Species of Animal") +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12, face = "italic"),
+    axis.title = element_text(size = 12, face = "italic"),
+    axis.text = element_text(size = 10))
 
 ```
 
