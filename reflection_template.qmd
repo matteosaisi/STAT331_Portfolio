@@ -11,7 +11,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A-.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -156,6 +156,14 @@ get_fit_now_member |>
              join_by(license_id == id)) |>
   filter(str_detect(plate_number, "H42W")) |>
   pull(person_id)
+
+#Lab 3, Question 12
+teacher_evals_clean |>
+  filter("female" %in% sex, "dr" %in% academic_degree, "ma" %in% academic_degree) |>
+  group_by(teacher_id) |>
+  summarise(avg_resp = mean(resp_share)) |>
+  filter(avg_resp == max(avg_resp) | avg_resp == min(avg_resp)) |>
+  arrange(desc(avg_resp))
 
 ```
 
@@ -649,45 +657,19 @@ ca_childcare |>
 ```{r}
 #| label: dvs-2-2
 
-#Lab 4, Question 6
-ca_childcare |>
-  select(study_year, 
-         region, 
-         mc_infant, 
-         mc_toddler, 
-         mc_preschool) |>
-  pivot_longer(cols = c(mc_infant, 
-                        mc_toddler,
-                        mc_preschool), 
-               names_to = "mc_cat", 
-               values_to = "mc_cost") |>
-  mutate(mc_cat = fct_recode(.f = mc_cat,
-                             "Infant" = "mc_infant",
-                             "Toddler" = "mc_toddler",
-                             "Preschool" = "mc_preschool")) |>
-  ggplot(mapping = aes(x = study_year, 
-                       y = mc_cost, 
-                       color = fct_reorder2(.f = region,
-                                            .x = study_year, 
-                                            .y = mc_cost))) +
-  geom_point() +
-  geom_smooth() +
-  scale_x_continuous(breaks = c(2008, 
-                                2010, 
-                                2012, 
-                                2014, 
-                                2016, 
-                                2018)) +
-  facet_wrap(~ (mc_cat = fct_relevel(mc_cat, 
-                                     "Infant", 
-                                     "Toddler", 
-                                     "Preschool"))) +
-  theme_bw() +
-  theme(axis.text.x = element_text(size = 6.5)) +
-  labs(y = "",
-       x = "Study Year",
-       color = "California Region",
-       title = "Weekly Median Price for Center-Based Childcare ($)")
+#Lab 2, Question 4 (Revised with additional text theme options to make the plot more interesting)
+ggplot(data = surveys, mapping = aes(x = weight, y = hindfoot_length)) + 
+  geom_point(color = "darkblue", alpha = 0.5) + 
+  facet_wrap(~species) +
+  labs(x = "Weight (Grams)", 
+       y = "",
+       subtitle = "Hindfoot Length (Millimeters)",
+       title = "Hindfoot Length vs. Weight Faceted by Species of Animal") +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12, face = "italic"),
+    axis.title = element_text(size = 12, face = "italic"),
+    axis.text = element_text(size = 10))
 
 ```
 
@@ -1082,6 +1064,12 @@ rescale_column <- function(df, var_names){
     mutate(across(.cols = {{var_names}}, 
                   ~rescale_01(.x)))
 }
+
+#Challenge 7, Question 3
+condition_index <- function(df, var_1, var_2){
+  df |>
+    mutate(c_index = ({{var_1}} / ({{var_2}} ** 3)) * 100)
+}
   
 ```
 
@@ -1203,12 +1191,36 @@ ca_childcare |>
 ```{r}
 #| label: dsm-1-1
 
-#Lab 9, Question 4
+#Lab 9, Question 4 - 7
 simulate_means <- function(n, df){
   map_dbl(.x = 1:n, 
           .f = ~rchisq(n = 100, df) %>% mean()
           )
 }
+
+grid <- crossing(n = c(10, 100, 1000, 10000), 
+                 df = 10)
+
+all_simulations <- grid |> 
+  mutate(simulated_means = pmap(.l = grid, 
+                                .f = simulate_means)
+         ) |>
+  unnest(simulated_means)
+
+all_simulations |>
+  group_by(n) |>
+  summarise(overall_mean = mean(simulated_means)) |>
+  gt() |>
+  tab_header(title = md("**Means of Different Simulation Sizes**"), 
+             subtitle = md("*Sizes of 10, 100, 1000, and 10000*")) |>
+  tab_style(style = cell_text(font = "Arial", size = px(14)),
+            locations = cells_body()) |>
+  tab_options(table.border.top.color = "black",
+              table.border.bottom.color = "black") |>
+  fmt_number(columns = overall_mean,
+            decimals = 2) |>
+  cols_label(n = "Simulation Size",
+             overall_mean = "Mean Value")
 
 ```
 
@@ -1217,7 +1229,7 @@ simulate_means <- function(n, df){
 ```{r}
 #| label: dsm-1-2
 
-#Lab 9, Question 1 (Sample function)
+#Lab 9, Question 1
 randomBabies <- function(nBabies = 4){
   sample <- tibble(baby = 1:nBabies,
                   number = sample(1:nBabies,
