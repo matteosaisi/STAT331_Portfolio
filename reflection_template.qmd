@@ -360,7 +360,26 @@ person_interview <- person |>
 ```{r}
 #| label: wd-6-anti
 
+#Lab 5, Finding Final Suspect (revised to include anti_join, 
+#  filters out lower income people)
+low_income <- income |>
+  filter(annual_income <= 100000)
 
+income |>
+  anti_join(low_income,
+            join_by(ssn)) |>
+  inner_join(person,
+             join_by(ssn)) |>
+  right_join(drivers_license,
+            join_by(license_id == id)) |>
+  right_join(facebook_event_checkin,
+            join_by(id == person_id)) |>
+  mutate(annual_income = str_c("$", annual_income)) |>
+  filter(height == c(65:67),
+         hair_color == "red",
+         car_make == "Tesla",
+         str_detect(event_name, "SQL Symphony")) |>
+  pull(name)
 
 ```
 
